@@ -1,0 +1,68 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bakery-cream: #fdfbf7;
+    --bakery-cream-light: #fffdf9;
+    --bakery-pink-50: #fff5f5;
+    --bakery-pink-100: #fde8e9;
+    --bakery-pink-200: #fbcad0;
+    --bakery-pink-500: #e06d80;
+    --bakery-brown-900: #2c1a11;
+    --bakery-brown-800: #42281d;
+    --bakery-brown-700: #5c3826;
+    --bakery-caramel: #c88141;
+    --bakery-gold: #d4a373;
+  }
+
+  body {
+    background-color: #fdfbf7;
+    color: #2c1a11;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Custom scrollbars & smooth interactions */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fdfbf7;
+}
+::-webkit-scrollbar-thumb {
+  background: #e2d1c3;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c88141;
+}
+
+/* Audio waveform animation */
+@keyframes soundwave {
+  0%, 100% { height: 6px; }
+  50% { height: 28px; }
+}
+
+.animate-soundwave-1 { animation: soundwave 0.8s ease-in-out infinite; }
+.animate-soundwave-2 { animation: soundwave 1.1s ease-in-out infinite 0.2s; }
+.animate-soundwave-3 { animation: soundwave 0.9s ease-in-out infinite 0.4s; }
+.animate-soundwave-4 { animation: soundwave 1.2s ease-in-out infinite 0.1s; }
+.animate-soundwave-5 { animation: soundwave 0.7s ease-in-out infinite 0.3s; }
+
+/* Print styling for Counter QR Posters & Invoices */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}

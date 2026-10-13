@@ -1,0 +1,18 @@
+{
+  "short_name": "Vinutha Bakery",
+  "name": "Vinutha Bakery – Cake Ordering & Two-Shop System",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "background_color": "#FDFBF7",
+  "theme_color": "#42281D",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "description": "Order fresh cakes, ice cakes, and custom celebration cakes from Vinutha Bakery. Scan counter QR codes for instant ordering."
+}

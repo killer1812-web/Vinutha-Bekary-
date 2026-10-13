@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#42281D"/>
+      <stop offset="100%" stop-color="#2C1A11"/>
+    </linearGradient>
+    <linearGradient id="frostGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF9"/>
+      <stop offset="100%" stop-color="#FCE7E9"/>
+    </linearGradient>
+    <linearGradient id="berryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E06D80"/>
+      <stop offset="100%" stop-color="#BE185D"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F6D365"/>
+      <stop offset="100%" stop-color="#FDA085"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Rounded Base Background -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  
+  <!-- Outer Gold Ring -->
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#D4A373" stroke-width="6" stroke-dasharray="12 12" opacity="0.6"/>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="#D4A373" stroke-width="2" opacity="0.4"/>
+  
+  <!-- Cake Base Stand -->
+  <path d="M160 410 L352 410 Q356 422 340 430 L172 430 Q156 422 160 410 Z" fill="#D4A373"/>
+  <path d="M200 430 L312 430 L324 450 L188 450 Z" fill="#B87D4B"/>
+  
+  <!-- Cake Tier 1 (Bottom) -->
+  <rect x="136" y="320" width="240" height="90" rx="14" fill="#FCE7E9"/>
+  <!-- Chocolate drip / decorative band -->
+  <path d="M136 340 C160 355 180 330 200 345 C220 360 240 335 260 348 C280 362 300 338 320 346 C340 355 360 340 376 342 L376 320 L136 320 Z" fill="#5C3826"/>
+  
+  <!-- Cake Tier 2 (Middle) -->
+  <rect x="176" y="230" width="160" height="90" rx="12" fill="url(#frostGrad)"/>
+  <path d="M176 250 C192 262 208 245 224 256 C240 268 256 248 272 258 C288 266 304 250 336 252 L336 230 L176 230 Z" fill="#E06D80" opacity="0.85"/>
+  
+  <!-- Cake Tier 3 (Top) -->
+  <rect x="212" y="160" width="88" height="70" rx="10" fill="#FFF5F5"/>
+  <path d="M212 175 C224 185 236 172 250 182 C264 190 276 176 300 178 L300 160 L212 160 Z" fill="#5C3826"/>
+  
+  <!-- Top Berries & Candles -->
+  <circle cx="236" cy="150" r="12" fill="url(#berryGrad)"/>
+  <circle cx="276" cy="150" r="12" fill="url(#berryGrad)"/>
+  
+  <!-- Glowing Candle in Center -->
+  <rect x="252" y="125" width="8" height="35" rx="3" fill="#D4A373"/>
+  <!-- Candle Flame -->
+  <path d="M256 95 C250 110 244 116 256 125 C268 116 262 110 256 95 Z" fill="url(#goldGrad)"/>
+  <circle cx="256" cy="112" r="5" fill="#FFF"/>
+  
+  <!-- Star Sparkles -->
+  <path d="M120 180 Q130 180 130 170 Q130 180 140 180 Q130 180 130 190 Q130 180 120 180 Z" fill="#F6D365"/>
+  <path d="M370 190 Q380 190 380 180 Q380 190 390 190 Q380 190 380 200 Q380 190 370 190 Z" fill="#F6D365"/>
+  <path d="M340 120 Q346 120 346 114 Q346 120 352 120 Q346 120 346 126 Q346 120 340 120 Z" fill="#F6D365"/>
+</svg>
