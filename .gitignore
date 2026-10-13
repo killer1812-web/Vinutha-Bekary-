@@ -22,3 +22,20 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Local database backups
+*.backup
+*.bak
+
+# Local dependencies and build output
+node_modules/
+dist/
+
+
+# Local bakery database may contain customer and order information
+server/data/bakery_database.json
