@@ -1,0 +1,30 @@
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: vinutha-bakery-backend
+    environment:
+      PORT: 5000
+    ports:
+      - "5001:5000"
+    volumes:
+      - bakery_data:/app/server/data
+      - bakery_uploads:/app/server/uploads
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: vinutha-bakery-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  bakery_data:
+  bakery_uploads:
