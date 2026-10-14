@@ -194,6 +194,9 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     loadStorage(STORAGE_KEYS.INVENTORY, INITIAL_INVENTORY)
   );
   const [stockMovements, setStockMovements] = useState<StockMovement[]>(() => loadStorage(STORAGE_KEYS.MOVEMENTS, []));
+  const [stockRequirements, setStockRequirements] = useState<StockRequirement[]>(() =>
+  loadStorage(STORAGE_KEYS.STOCK_REQUIREMENTS, [])
+);
   const [notifications, setNotifications] = useState<AppNotification[]>(() =>
     loadStorage(STORAGE_KEYS.NOTIFICATIONS, INITIAL_NOTIFICATIONS)
   );
@@ -210,7 +213,7 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       setIsBackendConnected(true);
 
-      const [bShop, bShops, bCakes, bOrders, bExpenses, bPurchases, bInventory, bSuppliers, bNotifs] =
+      const [bShop, bShops, bCakes, bOrders, bExpenses, bPurchases, bInventory, bSuppliers, bNotifs, bStockRequirements] =
         await Promise.all([
           api.getShop().catch(() => null),
           api.getShops().catch(() => null),
@@ -221,6 +224,7 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
           api.getInventory().catch(() => null),
           api.getSuppliers().catch(() => null),
           api.getNotifications().catch(() => null),
+          api.getStockRequirements().catch(() => null),
         ]);
 
       if (bShop && bShops) {
@@ -233,6 +237,9 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (bInventory && bInventory.length > 0) setInventory(bInventory);
       if (bSuppliers && bSuppliers.length > 0) setSuppliers(bSuppliers);
       if (bNotifs && bNotifs.length > 0) setNotifications(bNotifs);
+      if (bStockRequirements !== null) {setStockRequirements(bStockRequirements);
+
+      }
 
       // Customer specific sync
       const custToken = api.getCustomerToken();
@@ -272,6 +279,7 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => saveStorage(STORAGE_KEYS.PURCHASES, purchaseRecords), [purchaseRecords]);
   useEffect(() => saveStorage(STORAGE_KEYS.INVENTORY, inventory), [inventory]);
   useEffect(() => saveStorage(STORAGE_KEYS.MOVEMENTS, stockMovements), [stockMovements]);
+  useEffect(() => saveStorage(STORAGE_KEYS.STOCK_REQUIREMENTS, stockRequirements), [stockRequirements]);
   useEffect(() => saveStorage(STORAGE_KEYS.NOTIFICATIONS, notifications), [notifications]);
   useEffect(() => saveStorage(STORAGE_KEYS.USER, currentUser), [currentUser]);
   useEffect(() => saveStorage(STORAGE_KEYS.STAFF, staffUsers), [staffUsers]);
@@ -727,8 +735,70 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       );
     }
   };
+  
+  // Create a stock requirement
+  const createStockRequirement = async (
+    reqData: Omit<
+      StockRequirement,
+      'id' | 'createdAt' | 'updatedAt' | 'quantityToPurchase'
+    >
+  ): Promise<StockRequirement> => {
+    try {
+      const saved = await api.createStockRequirement(reqData);
+      setStockRequirements((prev) => [saved, ...prev]);
+      return saved;
+    } catch (error) {
+      console.warn('Could not save stock requirement:', error);
+
+      const now = new Date().toISOString();
+      const newRequirement: StockRequirement = {
+        ...reqData,
+        id: `req-${Date.now()}`,
+        shopId: reqData.shopId || activeShopId,
+        quantityToPurchase: Math.max(
+          0,
+          Number(reqData.quantityRequired) - Number(reqData.availableStock)
+        ),
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      setStockRequirements((prev) => [newRequirement, ...prev]);
+      return newRequirement;
+    }
+  };
+
+  // Update a stock requirement's status
+  const updateStockRequirementStatus = async (
+    id: string,
+    status: 'Requested' | 'Approved' | 'Purchased' | 'Cancelled',
+    purchasePrice?: number
+  ): Promise<void> => {
+    try {
+      const updated = await api.updateStockRequirementStatus(
+        id,
+        status,
+        purchasePrice
+      );
+
+      setStockRequirements((prev) =>
+        prev.map((item) => (item.id === id ? updated : item))
+      );
+    } catch (error) {
+      console.warn('Could not update stock requirement:', error);
+
+      setStockRequirements((prev) =>
+        prev.map((item) =>
+          item.id === id
+            ? { ...item, status, updatedAt: new Date().toISOString() }
+            : item
+        )
+      );
+    }
+  };
 
   const markNotificationRead = async (id: string) => {
+    
     try {
       await api.markNotificationRead(id);
     } catch {}
@@ -780,6 +850,9 @@ export const BakeryProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         inventory,
         adjustStock,
         stockMovements,
+        stockRequirements,
+        createStockRequirement,
+        updateStockRequirementStatus,
         notifications,
         markNotificationRead,
         auditLogs,
