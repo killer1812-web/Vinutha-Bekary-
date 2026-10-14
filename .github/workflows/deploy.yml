@@ -1,0 +1,72 @@
+
+name: Vinutha Bakery CD
+
+on:
+  workflow_run:
+    workflows: ["Vinutha Bakery CI"]
+    types:
+      - completed
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: vinutha-bakery-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy to EC2
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.event == 'push')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure SSH
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_SSH_KEY: ${{ secrets.EC2_SSH_KEY }}
+        run: |
+          set -eu
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy application
+        env:
+          EC2_HOST: ${{ secrets.EC2_HOST }}
+          EC2_USER: ${{ secrets.EC2_USER }}
+        run: |
+          ssh -i ~/.ssh/deploy_key \
+            -o StrictHostKeyChecking=yes \
+            "$EC2_USER@$EC2_HOST" 'bash -s' <<'REMOTE'
+          set -eu
+          cd ~/Vinutha-Bekary-
+          git pull --ff-only origin main
+          sudo docker compose config -q
+          sudo docker compose build
+          sudo docker compose up -d --remove-orphans
+
+          for attempt in $(seq 1 12); do
+            if curl -fsS http://localhost:8080/api/health >/dev/null; then
+              echo "Deployment successful."
+              exit 0
+            fi
+            sleep 5
+          done
+
+          echo "Health check failed."
+          sudo docker compose ps
+          sudo docker compose logs --tail=100
+          exit 1
+          REMOTE
