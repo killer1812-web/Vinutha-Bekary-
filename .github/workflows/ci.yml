@@ -1,41 +1,41 @@
+
 name: Vinutha Bakery CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
+    name: Verify application and Docker
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.sha }}
-
-      - name: Verify Dockerfiles
-        run: |
-          pwd
-          git rev-parse --short HEAD
-          ls -la
-          test -f Dockerfile.frontend
-          test -f Dockerfile.backend
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: "22"
           cache: npm
 
       - name: Install dependencies
-        run: npm ci --include=dev
+        run: npm ci
 
-      - name: Build frontend Docker image
-        run: docker build -f Dockerfile.frontend -t vinutha-frontend .
+      - name: Build frontend
+        run: npm run build
 
-      - name: Build backend Docker image
-        run: docker build -f Dockerfile.backend -t vinutha-backend .
+      - name: Validate Docker Compose
+        run: docker compose config -q
+
+      - name: Build Docker images
+        run: docker compose build
