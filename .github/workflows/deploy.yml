@@ -29,18 +29,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    ```yaml
       - name: Configure SSH
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
-          EC2_SSH_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+          EC2_SSH_PRIVATE_KEY_B64: ${{ secrets.EC2_SSH_PRIVATE_KEY_B64 }}
         run: |
           set -eu
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$EC2_SSH_KEY" > ~/.ssh/deploy_key
+          printf '%s' "$EC2_SSH_PRIVATE_KEY_B64" | base64 --decode > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null
           ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
+```
 
       - name: Deploy application
         env:
