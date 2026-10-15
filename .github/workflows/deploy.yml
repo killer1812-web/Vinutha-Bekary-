@@ -1,4 +1,4 @@
-
+```yaml
 name: Vinutha Bakery CD
 
 on:
@@ -29,7 +29,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    yaml
       - name: Configure SSH
         env:
           EC2_HOST: ${{ secrets.EC2_HOST }}
@@ -43,7 +42,6 @@ jobs:
           ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null
           ssh-keyscan -H "$EC2_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
-
 
       - name: Deploy application
         env:
@@ -73,3 +71,4 @@ jobs:
           sudo docker compose logs --tail=100
           exit 1
           REMOTE
+```
